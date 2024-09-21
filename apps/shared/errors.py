@@ -1,0 +1,1 @@
+INVALID_LOGIN = {"non_field_errors": "Invalid phone number /password"}

@@ -1,0 +1,30 @@
+
+volumes:
+  redis_data:
+  postgres_data:
+  elastic_search_data:
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - ./staging/.staging_env_local
+    environment:
+      - SERVICE_TYPE=web
+      - SERVER_TYPE=local
+      - ENVIRONMENT=staging
+    networks:
+      - app_network
+
