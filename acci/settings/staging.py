@@ -6,7 +6,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', "158.178.200.22:8000"]
 CORS_ALLOWED_ORIGINS = [
     'https://local.scanport.com',
     'http://stage.accihq.org/',
-    '158.178.200.22:8000',
+    'http://158.178.200.22:8000',
     'http://localhost:3000',
 ]
 DEBUG = True
