@@ -77,7 +77,6 @@ class BaseModel(models.Model):
                         except Exception as e:
                             raise ValidationError(f"Error encrypting {field}: {str(e)}")
                     else:
-                        # Handle None value - you might want to set it to a specific value or leave it as None
                         setattr(self, field, None)
 
         if hasattr(self, 'user'):
@@ -94,10 +93,10 @@ class CustomTypes(BaseModel):
         ('ministry_group', 'Ministry Group'),
 
     )
-    name = models.CharField(max_length=255, unique=True)  # Mr
+    name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    category = models.CharField(max_length=255, choices=CATEGORY_CHOICES)  # member_title
-    category_name = models.CharField(max_length=255, null=True, blank=True)  # Member Title
+    category = models.CharField(max_length=255, choices=CATEGORY_CHOICES)
+    category_name = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"{self.id} - {self.name}"

@@ -16,8 +16,6 @@ class DistrictSerializer(serializers.Serializer):
         fields = ['id', 'name', 'district_head', 'area']
 
     def validate_name(self, value):
-        if value is None:
-            return None
         if self.instance and self.instance.name == value:
             return value
         if District.objects.filter(name=value, is_active=True).exists():
@@ -25,6 +23,8 @@ class DistrictSerializer(serializers.Serializer):
         return value
 
     def validate_district_head(self, value):
+        if value is None:
+            return None
         if self.instance and self.instance.district_head == value:
             return value
         if self.instance and District.objects.filter(district_head=value, is_active=True).exclude(

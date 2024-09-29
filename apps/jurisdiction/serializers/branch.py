@@ -29,8 +29,6 @@ class BranchSerializer(serializers.Serializer):
         ]
 
     def validate_name(self, value):
-        if value is None:
-            return None
         if self.instance and self.instance.name == value:
             return value
         if Branch.objects.filter(name=value, is_active=True).exists():
