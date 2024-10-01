@@ -14,6 +14,8 @@ def send_sms(phone_number, message, sender_id):
     response = requests.post(url, data)
     data = response.json()
 
-    if data["error"]:
+    if data['status'] == 'success':
+        pass
+    elif data['status'] != 'success':
         return ("We're experiencing a temporary issue. Our team is working to resolve it as quickly as"
                 " possible. Please try again later. Thank you for your patience!")

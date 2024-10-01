@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db import transaction
 
 from apps.accounts.api.serializers.auth import UserSerializer
 from apps.accounts.api.serializers.users import NewUserSerializer, GroupSerializer, PermissionSerializer, \
@@ -43,23 +44,11 @@ class UserAccountViewSet(viewsets.GenericViewSet):
             IsAuthenticated(), UserPermission(user_permission)
         ]
 
+    @transaction.atomic
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            try:
-                member, created = Member.objects.update_or_create(phone_number=user.phone_number,
-                                                                  defaults={
-                                                                      'first_name': user.first_name,
-                                                                      'last_name': user.last_name,
-                                                                      'email': user.email,
-                                                                      'gender': user.gender,
-                                                                      'branch': user.branch
-                                                                  })
-                user.member = member
-                user.save()
-            except Exception as e:
-                pass
             return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

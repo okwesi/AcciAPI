@@ -40,12 +40,11 @@ class NewUserSerializer(serializers.ModelSerializer):
         user = User(**validated_data)
         code = user.set_sms_verification()
         message = f'Your verification code is {code}'
-        send_sms(user.phone_number, message, sender_id='ACCI')
         user.save()
-
         # Assign group
         if group:
             user.groups.set([group])
+        send_sms(user.phone_number, message, sender_id='ACCI')
 
         return user
 
