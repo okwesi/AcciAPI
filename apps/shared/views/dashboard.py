@@ -4,7 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.jurisdiction.models import Branch
+from apps.jurisdiction.models import Branch, District, Area
 from apps.member.models import Member
 from apps.shared.serializers.custom_types import CustomTypesSerializer
 
@@ -23,13 +23,13 @@ class DashboardViewSet(viewsets.GenericViewSet):
         youth_threshold = current_date.replace(year=current_date.year - 45)
 
         # Perform queries to get all required data
-        jurisdiction_counts = Branch.objects.aggregate(
-            branches=Count('id'),
-            districts=Count('district', distinct=True),
-            areas=Count('district__area', distinct=True)
-        )
+        jurisdiction_counts = {
+            'areas': Area.objects.filter(is_active=True).count(),
+            'districts': District.objects.filter(is_active=True).count(),
+            'branches': Branch.objects.filter(is_active=True).count()
+        }
 
-        member_data = Member.objects.aggregate(
+        member_data = Member.objects.filter(is_active=True).aggregate(
             branch_members=Count('id', filter=Q(branch=branch)),
             district_members=Count('id', filter=Q(branch__district=branch.district)),
             area_members=Count('id', filter=Q(branch__district__area=branch.district.area)),
