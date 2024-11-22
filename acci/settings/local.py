@@ -20,7 +20,12 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=7),
     'SLIDING_TOKEN_LIFETIME': timedelta(days=120),
 }
-CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", 'https://backend.accihq.org']
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "https://backend.accihq.org",
+    "http://localhost:8000",
+]
+CSRF_COOKIE_SECURE = True
 STATIC_URL = f'/static/'
 # Media files
 MEDIA_URL = f'/media/'
