@@ -14,7 +14,7 @@ from apps.shared.literals import (
     VIEW_GROUPS_AND_ROLES, CREATE_GROUPS_AND_ROLES, UPDATE_GROUPS_AND_ROLES, DELETE_GROUPS_AND_ROLES, VIEW_BRANCHES,
     ADD_AREA, UPDATE_AREA, DELETE_AREA, VIEW_AREAS, ADD_DISTRICT, UPDATE_DISTRICT, DELETE_DISTRICT, VIEW_DISTRICTS,
     ADD_BRANCH, UPDATE_BRANCH, DELETE_BRANCH, VIEW_BRANCHES, LIST_BRANCH_MEMBERS, LIST_DISTRICT_MEMBERS,
-    LIST_AREA_MEMBERS, DELETE_CUSTOM_TYPE, ADD_CUSTOM_TYPE, UPDATE_CUSTOM_TYPE, VIEW_CUSTOM_TYPES
+    LIST_AREA_MEMBERS, DELETE_CUSTOM_TYPE, ADD_CUSTOM_TYPE, UPDATE_CUSTOM_TYPE, VIEW_CUSTOM_TYPES, ADD_BULK_MEMBERS
 )
 from apps.shared.models import BaseModel
 from apps.shared.utils.validators import validate_only_digits
@@ -135,6 +135,8 @@ class User(AbstractUser, BaseModel, PermissionsMixin):
             (LIST_BRANCH_MEMBERS, 'view members of my branch'),
             (LIST_DISTRICT_MEMBERS, 'view members of my district'),
             (LIST_AREA_MEMBERS, 'view members of my area'),
+            (ADD_BULK_MEMBERS, 'add bulk members'),
+
             # Jurisdiction:
                 # branches:
                 (VIEW_BRANCHES, 'view branches'),

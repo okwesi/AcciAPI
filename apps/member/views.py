@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import viewsets, status
@@ -8,13 +9,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.member.models import Member
-from apps.member.serializer import MemberSerializer, ShortMemberSerializer, FullMemberSerializer
+from apps.member.serializer import MemberSerializer, ShortMemberSerializer, FullMemberSerializer, BulkMemberSerializer
 from apps.shared.literals import (
     ADD_MEMBER, UPDATE_MEMBER, DELETE_MEMBER, VIEW_MEMBERS, LIST_BRANCH_MEMBERS,
     LIST_DISTRICT_MEMBERS, LIST_AREA_MEMBERS
 )
 from apps.shared.utils.permissions import UserPermission
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -33,7 +33,8 @@ class MemberViewSet(viewsets.GenericViewSet):
             'list_branch_members': LIST_BRANCH_MEMBERS,
             'list_district_members': LIST_DISTRICT_MEMBERS,
             'list_area_members': LIST_AREA_MEMBERS,
-            'get_short_members': VIEW_MEMBERS
+            'get_short_members': VIEW_MEMBERS,
+            'bulk_import_members': VIEW_MEMBERS
         }
         user_permission = permissions[self.action]
         print(f'user: {self.request.user}'
@@ -326,5 +327,50 @@ class MemberViewSet(viewsets.GenericViewSet):
             )
         return Response(ShortMemberSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'])
+    def bulk_import_members(self, request):
+        """
+        Bulk import members with error handling for duplicates
 
-# TODO: ADD VIEW CHURCH, AREA, DISTRICT MEMBERS
+        Args:
+            request: The request object containing the list of members to import
+
+        Returns:
+            Response: The response object containing successfully created members
+            and a list of members that could not be saved
+        """
+        members_data = request.data
+        successful_members = []
+        failed_members = []
+        for member_data in members_data:
+            try:
+                existing_member = Member.objects.filter(
+                    Q(phone_number=member_data.get('phone_number')) |
+                    Q(email=member_data.get('email'))
+                ).first()
+
+                if existing_member:
+                    # If member exists, add to failed members
+                    member_data['error'] = 'Duplicate phone number or email'
+                    failed_members.append(member_data)
+                    continue
+
+                # Validate and create member
+                serializer = BulkMemberSerializer(data=member_data, context={'request': request})
+                if serializer.is_valid():
+                    member = serializer.save(branch=request.user.branch, created_by=request.user)
+                    successful_members.append(serializer.data)
+                else:
+                    member_data['errors'] = serializer.errors
+                    failed_members.append(member_data)
+
+            except Exception as e:
+                # member_data['error'] = e
+                failed_members.append(member_data)
+
+        return Response({
+            'failed_members': failed_members,
+            'total_processed': len(members_data),
+            'total_successful': len(successful_members),
+            'total_failed': len(failed_members)
+        }, status=status.HTTP_201_CREATED)

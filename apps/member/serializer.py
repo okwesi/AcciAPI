@@ -1,12 +1,11 @@
-from datetime import datetime
-
+from django.db import transaction
+from django.db.models import Q
 from rest_framework import serializers
 
 from apps.jurisdiction.models import Branch
-from apps.jurisdiction.serializers.branch import FullBranchSerializer, ShortBranchSerializer
+from apps.jurisdiction.serializers.branch import ShortBranchSerializer
 from apps.member.models import Member
 from apps.shared.models import CustomTypes
-from apps.shared.serializers.custom_types import CustomTypesSerializer
 
 
 class ShortMemberSerializer(serializers.ModelSerializer):
@@ -47,12 +46,13 @@ class ShortMemberSerializer(serializers.ModelSerializer):
         else:
             return None
 
+
 class MemberSerializer(serializers.ModelSerializer):
     branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=False)
     gender = serializers.ChoiceField(choices=Member.GENDER_CHOICES)
-    marital_status = serializers.ChoiceField(choices=Member.MARITAL_STATUS_CHOICES)
-    communication_preferences = serializers.ChoiceField(choices=Member.COMMUNICATION_CHOICES)
-    educational_level = serializers.ChoiceField(choices=Member.EDUCATION_LEVEL_CHOICES)
+    marital_status = serializers.ChoiceField(choices=Member.MARITAL_STATUS_CHOICES, required=False)
+    communication_preferences = serializers.ChoiceField(choices=Member.COMMUNICATION_CHOICES, required=False)
+    educational_level = serializers.ChoiceField(choices=Member.EDUCATION_LEVEL_CHOICES, required=False)
     member_title = serializers.PrimaryKeyRelatedField(queryset=CustomTypes.objects.all(), required=False)
     member_type = serializers.PrimaryKeyRelatedField(queryset=CustomTypes.objects.all(), required=False)
     member_position = serializers.PrimaryKeyRelatedField(queryset=CustomTypes.objects.all(), required=False)
@@ -119,3 +119,24 @@ class FullMemberSerializer(serializers.ModelSerializer):
     def get_member_type(self, obj):
         from apps.shared.serializers.custom_types import CustomTypesSerializer
         return CustomTypesSerializer(obj.member_type).data if obj.member_type else None
+
+
+class BulkMemberSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    other_name = serializers.CharField(required=False, allow_null=True,)
+    email = serializers.EmailField(required=False, allow_null=True,)
+    gender = serializers.ChoiceField(choices=Member.GENDER_CHOICES, required=False)
+    occupation = serializers.CharField(required=False, allow_null=True,)
+    country = serializers.CharField(required=False, allow_null=True,)
+    region = serializers.CharField(required=False, allow_null=True,)
+    hometown = serializers.CharField(required=False, allow_null=True,)
+    address = serializers.CharField(required=False, allow_null=True,)
+    phone_number = serializers.CharField(required=False, allow_null=True,)
+    date_joined = serializers.DateField(required=False, allow_null=True,)
+    is_baptised = serializers.BooleanField(required=False, allow_null=True,)
+
+    class Meta:
+        model = Member
+        fields = ['first_name', 'last_name', 'other_name', 'email', 'gender', 'occupation', 'country', 'region',
+                  'hometown', 'address', 'phone_number', 'date_joined', 'is_baptised']

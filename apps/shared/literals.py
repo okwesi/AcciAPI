@@ -30,6 +30,7 @@ UPDATE_MEMBER = 'member_management_update_member'
 LIST_BRANCH_MEMBERS = 'jurisdiction_management_view_branch_members'
 LIST_DISTRICT_MEMBERS = 'jurisdiction_management_view_district_members'
 LIST_AREA_MEMBERS = 'jurisdiction_management_view_area_members'
+ADD_BULK_MEMBERS = 'member_management_bulk_import_members'
 
 # jurisdiction:
 VIEW_AREAS = 'jurisdiction_management_view_areas'
