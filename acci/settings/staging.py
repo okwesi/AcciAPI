@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from acci.settings.base import *
 
-ALLOWED_HOSTS = ("*")
+ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
     'https://local.scanport.com',
     'https://stage.accihq.org',
