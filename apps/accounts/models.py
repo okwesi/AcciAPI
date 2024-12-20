@@ -14,9 +14,12 @@ from apps.shared.literals import (
     VIEW_GROUPS_AND_ROLES, CREATE_GROUPS_AND_ROLES, UPDATE_GROUPS_AND_ROLES, DELETE_GROUPS_AND_ROLES, VIEW_BRANCHES,
     ADD_AREA, UPDATE_AREA, DELETE_AREA, VIEW_AREAS, ADD_DISTRICT, UPDATE_DISTRICT, DELETE_DISTRICT, VIEW_DISTRICTS,
     ADD_BRANCH, UPDATE_BRANCH, DELETE_BRANCH, VIEW_BRANCHES, LIST_BRANCH_MEMBERS, LIST_DISTRICT_MEMBERS,
-    LIST_AREA_MEMBERS, DELETE_CUSTOM_TYPE, ADD_CUSTOM_TYPE, UPDATE_CUSTOM_TYPE, VIEW_CUSTOM_TYPES, ADD_BULK_MEMBERS
+    LIST_AREA_MEMBERS, DELETE_CUSTOM_TYPE, ADD_CUSTOM_TYPE, UPDATE_CUSTOM_TYPE, VIEW_CUSTOM_TYPES, ADD_BULK_MEMBERS,
+    CREATE_EVENT, UPDATE_EVENT, DELETE_EVENT, CREATE_DONATION, UPDATE_DONATION, DELETE_DONATION, CREATE_POST,
+    UPDATE_POST, DELETE_POST
 )
 from apps.shared.models import BaseModel
+from apps.shared.overrides import FileNameEngine
 from apps.shared.utils.validators import validate_only_digits
 
 
@@ -110,6 +113,7 @@ class User(AbstractUser, BaseModel, PermissionsMixin):
     date_verified = models.DateTimeField(blank=True, null=True)
     member = models.OneToOneField(Member, on_delete=models.CASCADE, blank=True, null=True)
     branch = models.ForeignKey('jurisdiction.Branch', on_delete=models.SET_NULL, blank=True, null=True)
+    avatar = models.ImageField(upload_to=FileNameEngine('avatars/'), null=True, blank=True)
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'email']
@@ -161,6 +165,19 @@ class User(AbstractUser, BaseModel, PermissionsMixin):
             (UPDATE_CUSTOM_TYPE, 'update an existing custom type'),
             (ADD_CUSTOM_TYPE, 'add a new custom type'),
             (DELETE_CUSTOM_TYPE, 'delete a custom type'),
+
+            (CREATE_EVENT, 'create an event'),
+            (UPDATE_EVENT, 'update an event'),
+            (DELETE_EVENT, 'delete an event'),
+
+            (CREATE_DONATION, 'create a donation'),
+            (UPDATE_DONATION, 'update a donation'),
+            (DELETE_DONATION, 'delete a donation'),
+
+            (CREATE_POST, 'create a new post'),
+            (UPDATE_POST, 'update an existing post'),
+            (DELETE_POST, 'delete a post'),
+
         ]
 
     def set_sms_verification(self):

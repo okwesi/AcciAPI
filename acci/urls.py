@@ -14,4 +14,8 @@ urlpatterns = [
     path('api/v1/', include('apps.member.urls')),
     path('api/v1/', include('apps.jurisdiction.urls')),
     path('api/v1/', include('apps.shared.urls')),
+    path('api/v1/', include('apps.events.urls')),
+    path('api/v1/', include('apps.transaction.urls')),
+    path('api/v1/', include('apps.donation.urls')),
+    path('api/v1/', include('apps.content.urls')),
 ]

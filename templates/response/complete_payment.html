@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - ACCI</title>
+    <style>
+        body, html {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000033;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #000033 0%, #000066 100%);
+        }
+        .content {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 2rem;
+        }
+        .success-icon-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 2rem auto;
+        }
+        .success-icon-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 2s ease-out infinite;
+        }
+        .success-icon-circle-outer {
+            background-color: rgba(0, 0, 102, 0.1);
+            animation-delay: 0.5s;
+        }
+        .success-icon-circle-middle {
+            background-color: rgba(0, 0, 102, 0.3);
+            transform: scale(0.8);
+            animation-delay: 0.3s;
+        }
+        .success-icon-circle-inner {
+            background-color: #000066;
+            transform: scale(0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: none;
+            opacity: 1;
+        }
+        .success-icon {
+            width: 60%;
+            height: 60%;
+            fill: white;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.5s forwards, draw 1s ease-out 0.5s forwards;
+        }
+        h1 {
+            color: #000066;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+        p {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .transaction-details {
+            background-color: #f5f5f5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .transaction-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .transaction-label {
+            font-weight: bold;
+            color: #000066;
+        }
+        .transaction-value {
+            color: #333;
+            font-size: 1.1rem;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .button {
+            background-color: #000066;
+            color: white;
+            border: none;
+            margin: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 102, 0.2);
+        }
+        .button:hover {
+            background-color: #000033;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 51, 0.3);
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes draw {
+            0% {
+                stroke-dashoffset: 100;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        @media (max-width: 480px) {
+            .content {
+                padding: 1.5rem;
+            }
+            .success-icon-container {
+                width: 120px;
+                height: 120px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <img src="https://accihq.org/wp-content/uploads/elementor/thumbs/cropped-acciNewLogo11-q0svzqc3i1wdgwla9148h62ouaofz5al9rhcum9r7k.png" alt="ACCI Logo" class="logo">
+            <div class="success-icon-container">
+                <div class="success-icon-circle success-icon-circle-outer"></div>
+                <div class="success-icon-circle success-icon-circle-middle"></div>
+                <div class="success-icon-circle success-icon-circle-inner">
+                    <svg class="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                    </svg>
+                </div>
+            </div>
+            <h1>Payment Successful!</h1>
+            <p>Your transaction has been completed successfully.</p>
+            <div class="transaction-details">
+                <div class="transaction-item">
+                    <span class="transaction-label">Payment Category:</span>
+                    <span class="transaction-value">{{ payment.category | title }}</span>
+                </div>
+                <div class="transaction-item">
+                    <span class="transaction-label">Payment Category Title:</span>
+                    <span class="transaction-value">{{ payment_category_title | title }}</span>
+                </div>
+                <div class="transaction-item">
+                    <span class="transaction-label">Amount:</span>
+                    <span class="transaction-value">{{ payment.currency }} {{ payment.amount }}</span>
+                </div>
+                <div class="transaction-item">
+                    <span class="transaction-label">Receipt Number:</span>
+                    <span class="transaction-value">{{ payment.receipt_number }}</span>
+                </div>
+                <div class="transaction-item">
+                    <span class="transaction-label">Date:</span>
+                    <span class="transaction-value">{{ payment_completed_at }}</span>
+                </div>
+            </div>
+            <p>Thank you for your payment. You will be redirected to the ACCI app shortly.</p>
+            <button id="returnButton" class="button">Return to ACCI</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var returnButton = document.getElementById('returnButton');
+            var redirectUrl = 'acci://transactions/{{payment.category}}/{{ payment.id }}';
+
+            returnButton.addEventListener('click', function() {
+                window.location.href = redirectUrl;
+            });
+
+            setTimeout(function() {
+                window.location.href = redirectUrl;
+            }, 15000);
+        });
+    </script>
+</body>
+</html>

@@ -9,8 +9,7 @@ NEW_PASSWORD = 'new_password'
 REFRESH_TOKEN = 'refresh_token'
 REQUEST = 'request'
 
-
-
+COMPLETE_PAYMENT_TEMPLATE = 'response/complete_payment.html'
 
 # accounts:
 VIEW_GROUPS_AND_ROLES = 'account_management_list_groups_and_roles'
@@ -53,3 +52,17 @@ ADD_CUSTOM_TYPE = 'custom_type_management_create_custom_type'
 VIEW_CUSTOM_TYPES = 'custom_type_management_view_custom_types'
 DELETE_CUSTOM_TYPE = 'custom_type_management_delete_custom_type'
 UPDATE_CUSTOM_TYPE = 'custom_type_management_update_custom_type'
+
+
+CREATE_EVENT = 'events_create_event'
+UPDATE_EVENT = 'events_update_event'
+DELETE_EVENT = 'events_destroy_event'
+
+
+CREATE_DONATION = 'donation_create_donation'
+UPDATE_DONATION = 'donation_update_donation'
+DELETE_DONATION = 'donation_delete_donation'
+
+CREATE_POST = 'content_post_create_post'
+UPDATE_POST = 'content_post_update_post'
+DELETE_POST = 'content_post_delete_post'
