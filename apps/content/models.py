@@ -27,6 +27,7 @@ class Post(BaseModel):
     comments = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
     shares = models.PositiveIntegerField(default=0)
+    branch = models.ForeignKey('jurisdiction.Branch', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ['-date_created']

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from apps.content.models import Post, PostMedia
+from apps.jurisdiction.serializers.branch import ShortBranchSerializer
 
 User = get_user_model()
 
@@ -32,6 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
     )
     media = PostMediaSerializer(many=True, read_only=True)
     created_by = PostOwnerSerializer(read_only=True)
+    branch = ShortBranchSerializer(many=False, read_only=True)
 
     class Meta:
         model = Post
@@ -39,9 +41,9 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'post_type', 'content',
             'comments', 'likes',
             'media_files', 'media', 'date_created',
-            'created_by'
+            'created_by', 'branch'
         ]
-        read_only_fields = ['post_type', 'comments', 'likes', 'media', 'date_created', 'created_by']
+        read_only_fields = ['post_type', 'comments', 'likes', 'media', 'date_created', 'created_by', 'branch']
 
     def validate_media_files(self, media_files):
         allowed_file_types = [choice[0] for choice in PostMedia.FILE_TYPE_CHOICES]
@@ -54,6 +56,7 @@ class PostSerializer(serializers.ModelSerializer):
         return media_files
 
     def create(self, validated_data):
+        validated_data['branch'] = self.context['user'].branch
         media_files_data = validated_data.pop('media_files', [])
         validated_data['created_by'] = self.context['user']
         validated_data['post_type'] = 'feed'
@@ -86,12 +89,13 @@ class ListPostsSerializer(serializers.ModelSerializer):
     is_favorite = serializers.BooleanField()
     liked = serializers.BooleanField()
     created_by = PostOwnerSerializer(read_only=True)
+    branch = ShortBranchSerializer(many=False, read_only=True)
 
     class Meta:
         model = Post
         fields = [
             'id', 'post_type', 'content',
-            'comments', 'likes', 'shares','media',
+            'comments', 'likes', 'shares','media', 'branch',
             'is_favorite', 'liked', 'date_created', 'created_by'
         ]
 
