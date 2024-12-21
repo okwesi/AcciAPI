@@ -6,10 +6,12 @@ from rest_framework.response import Response
 
 from apps.accounts.api.serializers.auth import UserSerializer, ProfileVerificationSerializer, \
     UserWithTokenSerializer, \
-    ProfileVerificationResendSerializer, LoginSerializer, PasswordChangeSerializer, LogoutSerializer
+    ProfileVerificationResendSerializer, LoginSerializer, PasswordChangeSerializer, LogoutSerializer, \
+    MemberCheckSerializer, MemberLoginSerializer, MemberUserWithTokenSerializer
 from apps.shared.general import GENERAL_SUCCESS_RESPONSE
 
 User = get_user_model()
+
 
 class UserAuthViewSet(viewsets.GenericViewSet):
     """
@@ -51,7 +53,6 @@ class UserAuthViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['POST'])
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
-
         if serializer.is_valid():
             user = authenticate(**serializer.validated_data)
             if user is not None:
@@ -76,7 +77,6 @@ class UserAuthViewSet(viewsets.GenericViewSet):
             return Response(GENERAL_SUCCESS_RESPONSE, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
-
     @action(detail=False, methods=['POST'])
     def logout(self, request):
         """
@@ -86,5 +86,25 @@ class UserAuthViewSet(viewsets.GenericViewSet):
         if serializer.is_valid():
             serializer.save()
             user_logout(request)
-            return Response(GENERAL_SUCCESS_RESPONSE, status=status.HTTP_200_OK) 
+            return Response(GENERAL_SUCCESS_RESPONSE, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['POST'], url_path='check-member-phone-number')
+    def check_member_phone_number(self, request):
+        """
+        Check if member's phone number exists
+        """
+        serializer = MemberCheckSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({'message': 'Account Created successfully, Verify your account'},
+                            status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['POST'], url_path='mobile-login')
+    def mobile_login(self, request):
+        serializer = MemberLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            return Response(MemberUserWithTokenSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)

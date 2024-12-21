@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.accounts.api.serializers.users import GroupSerializer
 from apps.jurisdiction.models import Branch
 from apps.jurisdiction.serializers.branch import ShortBranchSerializer
+from apps.member.models import Member
 from apps.shared.errors import INVALID_LOGIN
 from apps.shared.literals import (
     PASSWORD, VERIFICATION_CODE, PHONE_NUMBER, OLD_PASSWORD, NEW_PASSWORD,
@@ -39,7 +40,8 @@ class UserWithTokenSerializer(UserSerializer):
 
     def to_representation(self, obj):
         ret = super().to_representation(obj)
-
+        if obj.user_type == 'member':
+            ret.pop('groups')
         tokens = generate_tokens(obj)
 
         ret['access_token'] = tokens['access_token']
@@ -123,6 +125,12 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
 
     def validate(self, attrs):
+        try:
+            user = User.objects.get(phone_number=attrs["phone_number"])
+            if user.user_type != 'admin':
+                raise serializers.ValidationError("You are not an admin")
+        except User.DoesNotExist:
+            raise serializers.ValidationError(INVALID_LOGIN)
         user = authenticate(**attrs)
         if user is None:
             raise serializers.ValidationError(INVALID_LOGIN)
@@ -160,3 +168,67 @@ class LogoutSerializer(serializers.Serializer):
         except TokenError:
             raise serializers.ValidationError('Refresh token is blacklisted and cannot be used. '
                                               'Try login instead to get a new refresh token')
+
+
+class MemberCheckSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+
+    def validate_phone_number(self, value):
+        if User.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("User with this phone number already exists. Please Sign In.")
+
+        if not Member.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("Member with this phone number does not exist.")
+
+        return value
+
+    def create(self, validated_data):
+        phone_number = validated_data['phone_number']
+        member = Member.objects.get(phone_number=phone_number)
+        user = User.objects.create(
+            user_type='member',
+            member=member,
+            phone_number=phone_number,
+            **{
+                key: getattr(member, key)
+                for key in ['first_name', 'last_name', 'email', 'branch', 'gender']
+                if hasattr(member, key)
+            }
+        )
+        code = user.set_sms_verification()
+        message = f"Your verification code is {code}"
+        user.save()
+        send_sms(user.phone_number, message, sender_id='ACCI')
+
+        return user
+
+
+class MemberLoginSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        user = authenticate(**attrs)
+        if user is None:
+            raise serializers.ValidationError(INVALID_LOGIN)
+        attrs['user'] = user
+        return attrs
+
+
+class MemberUserWithTokenSerializer(UserSerializer):
+    access_token = serializers.CharField(read_only=True)
+    refresh_token = serializers.CharField(read_only=True)
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ['access_token', 'refresh_token']
+
+    def to_representation(self, obj):
+
+        ret = super().to_representation(obj)
+        ret.pop("groups")
+        tokens = generate_tokens(obj)
+
+        ret['access_token'] = tokens['access_token']
+        ret['refresh_token'] = tokens['refresh_token']
+
+        return ret

@@ -24,7 +24,7 @@ class ShortUserSerializer(serializers.ModelSerializer):
 
 
 class NewUserSerializer(serializers.ModelSerializer):
-    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), required=False)
+    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), required=True)
     branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=True)
 
     class Meta:
@@ -35,6 +35,7 @@ class NewUserSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        validated_data['user_type'] = 'admin'
         group = validated_data.pop('group', None)
 
         user = User(**validated_data)

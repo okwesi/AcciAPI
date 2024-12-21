@@ -100,6 +100,10 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser, BaseModel, PermissionsMixin):
     GENDER_CHOICES = (('m', 'Male'), ('f', 'Female'),)
+    USER_TYPES = (
+        ('member', 'Member'),
+        ('admin', 'Admin'),
+    )
     gender = models.CharField(choices=GENDER_CHOICES, max_length=10, blank=True, null=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
@@ -114,6 +118,7 @@ class User(AbstractUser, BaseModel, PermissionsMixin):
     member = models.OneToOneField(Member, on_delete=models.CASCADE, blank=True, null=True)
     branch = models.ForeignKey('jurisdiction.Branch', on_delete=models.SET_NULL, blank=True, null=True)
     avatar = models.ImageField(upload_to=FileNameEngine('avatars/'), null=True, blank=True)
+    user_type = models.CharField(max_length=10, choices=USER_TYPES)
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'email']

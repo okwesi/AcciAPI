@@ -20,6 +20,10 @@ class UserPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         # Check if the user has the specified permission
+        if request.user.user_type == 'member':
+            self.message = "Request Denied"
+            return False
+
         return request.user.has_perm(
             f'accounts.{self.permission_code}'
         )

@@ -56,7 +56,6 @@ class UserAccountViewSet(viewsets.GenericViewSet):
         """
         Update an existing user.
         """
-
         user = self.get_object()
         serializer = self.get_serializer(user, data=request.data, partial=True)
         if serializer.is_valid():
