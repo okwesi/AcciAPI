@@ -3,9 +3,10 @@ from django.db.models import Exists, OuterRef, Q
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from apps.content.models import Post, UserInteraction
-from apps.content.serializers.post import ListPostsSerializer, PostSerializer
+from apps.content.serializers.post import ListPostsSerializer, PostSerializer, AdminListPostsSerializer
 from apps.shared.general import GENERAL_SUCCESS_RESPONSE
 from apps.shared.literals import CREATE_POST, DELETE_POST, UPDATE_POST
 from apps.shared.utils.permissions import UserPermission
@@ -125,3 +126,40 @@ class PostViewSet(viewsets.GenericViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Post.DoesNotExist:
             return Response({"message": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['get'], url_path='admin-list')
+    def admin_list(self, request):
+        user = request.user
+        page = request.query_params.get('page', 1)
+        page_size = request.query_params.get('page_size', 10)
+        query = request.query_params.get('query')
+        branch = request.user.branch
+
+        posts = Post.objects.filter(is_active=True, post_type='feed', branch=branch)
+
+        if query:
+            posts = posts.filter(
+                Q(content__icontains=query)
+            )
+
+        paginator = Paginator(posts, 2)
+        page_obj = paginator.get_page(page)
+
+        results = AdminListPostsSerializer(
+            instance=page_obj.object_list,
+            many=True
+        ).data
+
+        return Response(
+            {
+                'results': results,
+                'pagination': {
+                    'total': posts.count(),
+                    'page': page_obj.number,
+                    'pages': paginator.num_pages,
+                    'has_next': page_obj.has_next(),
+                    'has_previous': page_obj.has_previous(),
+                }
+            },
+            status=status.HTTP_200_OK
+        )

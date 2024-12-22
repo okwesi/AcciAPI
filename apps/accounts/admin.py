@@ -76,9 +76,9 @@ env_mapping = {
     'production': 'Live'
 }
 env_alias = env_mapping[ENVIRONMENT]
-admin.site.site_header = f'Scanport Backend - {env_alias}'
-admin.site.site_title = f'Scanport Backend - {env_alias}'
-admin.site.index_title = f'Scanport Backend Admin - {env_alias}'
+admin.site.site_header = f'ACCI Backend - {env_alias}'
+admin.site.site_title = f'ACCI Backend - {env_alias}'
+admin.site.index_title = f'ACCI Backend Admin - {env_alias}'
 
 
 

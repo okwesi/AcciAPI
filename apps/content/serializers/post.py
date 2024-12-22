@@ -95,8 +95,25 @@ class ListPostsSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'id', 'post_type', 'content',
-            'comments', 'likes', 'shares','media', 'branch',
+            'comments', 'likes', 'shares', 'media', 'branch',
             'is_favorite', 'liked', 'date_created', 'created_by'
+        ]
+
+    def get_created_by(self, obj):
+        return obj.created_by.get_full_name()
+
+
+class AdminListPostsSerializer(serializers.ModelSerializer):
+    media = PostMediaSerializer(many=True, read_only=True)
+    created_by = PostOwnerSerializer(read_only=True)
+    branch = ShortBranchSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            'id', 'post_type', 'content',
+            'comments', 'likes', 'shares', 'media', 'branch',
+            'date_created', 'created_by'
         ]
 
     def get_created_by(self, obj):
