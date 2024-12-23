@@ -59,9 +59,9 @@ class UserInteractionInline(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['id', 'post_type', 'created_by', 'content_preview',
+    list_display = ['id', 'post_type', 'created_by',
                    'comments', 'likes', 'shares', 'branch', 'date_created',
-                   'media_count', 'view_on_site']
+                   'media_count', 'is_active']
     list_filter = ['post_type', 'branch', InteractionCountFilter, 'date_created']
     search_fields = ['content', 'created_by__username', 'branch__name']
     readonly_fields = ['comments', 'likes', 'shares', 'date_created']  # Removed 'last_modified'
