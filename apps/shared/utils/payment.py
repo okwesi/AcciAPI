@@ -4,7 +4,7 @@ from decouple import config as env
 
 
 
-def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
+def initialize(email: str, amount: int, currency: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
     url = f"https://api.paystack.co/transaction/initialize"
     headers = {
@@ -36,7 +36,7 @@ def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
 
 def verify_payment(reference: str) -> dict:
     """ Verifies payment status with Paystack. """
-    url = f"https://api.paystack.cotransaction/verify/{reference}"
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
     headers = {"Authorization": f"Bearer sk_test_a119c12e9eccd6fc2dd290ed11e39bd6bc9213d2"}
 
     response = requests.get(url, headers=headers)
