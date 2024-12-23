@@ -23,6 +23,8 @@ def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
     }
 
     response = requests.post(url, headers=headers, json=payload)
+    print(f"Paystack Response: {response.status_code}, {response.text}")
+
     if response.status_code == 200:
         response_data = response.json()
         print(response_data)
