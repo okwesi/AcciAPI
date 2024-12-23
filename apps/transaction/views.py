@@ -18,7 +18,8 @@ from apps.transaction.serializers import PaymentTransactionSerializer, PaymentVe
 
 
 class PaymentTransactionViewSet(viewsets.GenericViewSet):
-
+    queryset = PaymentTransaction.objects.all()
+    serializer_class = PaymentTransactionSerializer
     def get_permissions(self):
         if self.action == 'complete_payment':
             return [AllowAny()]

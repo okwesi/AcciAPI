@@ -3,7 +3,8 @@ from django.conf import settings
 from decouple import config as env
 
 
-def initialize(email: str, amount: int, currency: str) -> dict:
+
+def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
     url = f"https://api.paystack.co/transaction/initialize"
     headers = {
@@ -18,7 +19,6 @@ def initialize(email: str, amount: int, currency: str) -> dict:
         "currency": currency,
         "callback_url": callback_url,
     }
-    print(payload)
 
     response = requests.post(url, headers=headers, json=payload)
     print(f"Paystack Response: {response.status_code}, {response.text}")
@@ -31,16 +31,14 @@ def initialize(email: str, amount: int, currency: str) -> dict:
                 "payment_url": response_data["data"]["authorization_url"],
                 "reference": response_data["data"]["reference"],
             }
-    # raise ValueError("Payment initialization failed")
+    raise ValueError("Payment initialization failed")
 
 
 def verify_payment(reference: str) -> dict:
     """ Verifies payment status with Paystack. """
-    url = f"https://api.paystack.co/transaction/initialize"
-    headers = {
-        "Authorization": f"Bearer sk_test_a119c12e9eccd6fc2dd290ed11e39bd6bc9213d2",
-        "Content-Type": "application/json",
-    }
+    url = f"https://api.paystack.cotransaction/verify/{reference}"
+    headers = {"Authorization": f"Bearer sk_test_a119c12e9eccd6fc2dd290ed11e39bd6bc9213d2"}
+
     response = requests.get(url, headers=headers)
     response_data = response.json()
     print(response_data)
