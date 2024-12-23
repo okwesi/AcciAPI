@@ -56,13 +56,11 @@ class MakeDonationSerializer(serializers.Serializer):
         request = self.context.get('request')
         validated_data['amount'] = float(validated_data.pop('amount'))
         user = request.user
-        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
 
         payment_data = payment.initialize(
             email=user.email if user.is_authenticated else '',
             amount=validated_data['amount'],
             currency=validated_data['currency'],
-            user_agent=user_agent
         )
 
         payment_transaction = PaymentTransaction.objects.create(

@@ -82,14 +82,12 @@ class RedeemPledgeSerializer(serializers.Serializer):
                                     user=request.user)
         user = request.user
         amount = float(pledge.amount)
-        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
 
         # Initialize payment
         payment_data = payment.initialize(
             email=pledge.user.email,
             amount=amount,
             currency=pledge.currency,
-            user_agent=user_agent
         )
 
         # Create payment transaction

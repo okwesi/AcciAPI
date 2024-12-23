@@ -3,8 +3,7 @@ from django.conf import settings
 from decouple import config as env
 
 
-
-def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
+def initialize(email: str, amount: int, currency: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
     url = f"https://api.paystack.co/transaction/initialize"
     headers = {
@@ -19,6 +18,7 @@ def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
         "currency": currency,
         "callback_url": callback_url,
     }
+    print(payload)
 
     response = requests.post(url, headers=headers, json=payload)
     print(f"Paystack Response: {response.status_code}, {response.text}")
@@ -36,9 +36,11 @@ def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
 
 def verify_payment(reference: str) -> dict:
     """ Verifies payment status with Paystack. """
-    url = f"{paystack_url}transaction/verify/{reference}"
-    headers = {"Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}"}
-
+    url = f"https://api.paystack.co/transaction/initialize"
+    headers = {
+        "Authorization": f"Bearer sk_test_a119c12e9eccd6fc2dd290ed11e39bd6bc9213d2",
+        "Content-Type": "application/json",
+    }
     response = requests.get(url, headers=headers)
     response_data = response.json()
     print(response_data)
