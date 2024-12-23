@@ -7,13 +7,13 @@ paystack_url = settings.PAYSTACK_URL
 
 def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
-    url = f"{paystack_url}transaction/initialize"
+    url = f"https://api.paystack.co/transaction/initialize"
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json",
     }
     payment_domain = env("PAYMENT_DOMAIN", default="localhost")
-    callback_url = f'http://{payment_domain}:8000/api/v1/complete-payment'
+    callback_url = f'https://backend.accihq.org/api/v1/complete-payment'
 
     payload = {
         "email": email,
