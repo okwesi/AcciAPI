@@ -31,7 +31,7 @@ def initialize(email: str, amount: int, currency: str) -> dict:
                 "payment_url": response_data["data"]["authorization_url"],
                 "reference": response_data["data"]["reference"],
             }
-    raise ValueError("Payment initialization failed")
+    # raise ValueError("Payment initialization failed")
 
 
 def verify_payment(reference: str) -> dict:
