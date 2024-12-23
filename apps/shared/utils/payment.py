@@ -2,17 +2,15 @@ import requests
 from django.conf import settings
 from decouple import config as env
 
-paystack_url = settings.PAYSTACK_URL
 
 
 def initialize(email: str, amount: int, currency: str, user_agent: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
     url = f"https://api.paystack.co/transaction/initialize"
     headers = {
-        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Authorization": f"Bearer sk_test_a119c12e9eccd6fc2dd290ed11e39bd6bc9213d2",
         "Content-Type": "application/json",
     }
-    payment_domain = env("PAYMENT_DOMAIN", default="localhost")
     callback_url = f'https://backend.accihq.org/api/v1/complete-payment'
 
     payload = {

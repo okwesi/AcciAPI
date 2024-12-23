@@ -80,6 +80,7 @@ class DonationViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'], url_path='make-donation')
     def make_donation(self, request):
+        print(request.data)
         serializer = MakeDonationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             donation = serializer.save()
