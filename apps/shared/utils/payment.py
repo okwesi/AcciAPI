@@ -13,7 +13,7 @@ def initialize(email: str, amount: int, currency: str) -> dict:
     callback_url = f'https://backend.accihq.org/api/v1/complete-payment'
 
     payload = {
-        "email": email,
+        "email": "okwesi73@gmail.com",
         "amount": amount * 100,
         "currency": currency,
         "callback_url": callback_url,
