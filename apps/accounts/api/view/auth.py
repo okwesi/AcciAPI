@@ -9,6 +9,7 @@ from apps.accounts.api.serializers.auth import UserSerializer, ProfileVerificati
     ProfileVerificationResendSerializer, LoginSerializer, PasswordChangeSerializer, LogoutSerializer, \
     MemberCheckSerializer, MemberLoginSerializer, MemberUserWithTokenSerializer
 from apps.shared.general import GENERAL_SUCCESS_RESPONSE
+from apps.shared.task import send_sms
 
 User = get_user_model()
 
@@ -92,13 +93,17 @@ class UserAuthViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['POST'], url_path='check-member-phone-number')
     def check_member_phone_number(self, request):
         """
-        Check if member's phone number exists
+        Check if member's phone number exists and handle verification status
         """
         serializer = MemberCheckSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             user = serializer.save()
-            return Response({'message': 'Account Created successfully, Verify your account'},
-                            status=status.HTTP_201_CREATED)
+            if not user.is_verified:
+                return Response({ 'message': 'Please verify your account'},status=status.HTTP_200_OK)
+            return Response(
+                {'message': 'Account Created successfully'},
+                status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['POST'], url_path='mobile-login')

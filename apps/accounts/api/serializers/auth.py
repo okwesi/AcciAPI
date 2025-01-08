@@ -174,33 +174,44 @@ class MemberCheckSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=True)
 
     def validate_phone_number(self, value):
-        if User.objects.filter(phone_number=value).exists():
-            raise serializers.ValidationError("User with this phone number already exists. Please Sign In.")
-
-        if not Member.objects.filter(phone_number=value).exists():
+        # First check if member exists
+        if not Member.objects.filter(phone_number=value, is_active=True).exists():
             raise serializers.ValidationError("Member with this phone number does not exist.")
+
+        # Check if user exists and is verified
+        if User.objects.filter(phone_number=value, is_verified=True).exists():
+            raise serializers.ValidationError("User with this phone number already exists. Please Sign In.")
 
         return value
 
     def create(self, validated_data):
         phone_number = validated_data['phone_number']
         member = Member.objects.get(phone_number=phone_number)
-        user = User.objects.create(
-            username=phone_number,
-            user_type='member',
-            member=member,
-            phone_number=phone_number,
-            **{
-                key: getattr(member, key)
-                for key in ['first_name', 'last_name', 'email', 'branch', 'gender']
-                if hasattr(member, key)
-            }
-        )
-        code = user.set_sms_verification()
-        message = f"Your verification code is {code}"
-        user.save()
-        send_sms(user.phone_number, message, sender_id='ACCI')
 
+        # Check if user exists but is not verified
+        try:
+            user = User.objects.get(phone_number=phone_number, is_verified=False)
+            # Generate new verification code for existing unverified user
+            code = user.set_sms_verification()
+            user.save()
+        except User.DoesNotExist:
+            # Create new user if doesn't exist
+            user = User.objects.create(
+                username=phone_number,
+                user_type='member',
+                member=member,
+                phone_number=phone_number,
+                **{
+                    key: getattr(member, key)
+                    for key in ['first_name', 'last_name', 'email', 'branch', 'gender']
+                    if hasattr(member, key)
+                }
+            )
+            code = user.set_sms_verification()
+            user.save()
+
+        message = f"Your verification code is {code}"
+        send_sms(user.phone_number, message, sender_id='ACCI')
         return user
 
 
