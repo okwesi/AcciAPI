@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -25,6 +26,8 @@ class BranchViewSet(viewsets.GenericViewSet):
             'list': VIEW_BRANCHES,
             'retrieve': VIEW_BRANCHES
         }
+        if self.action in ['list']:
+            return [IsAuthenticated()]
         user_permission = permissions[self.action]
         return [
             IsAuthenticated(), UserPermission(user_permission)
@@ -67,7 +70,6 @@ class BranchViewSet(viewsets.GenericViewSet):
             return Response({'message': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = FullBranchSerializer(branch)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     def list(self, request):
         query = request.query_params.get('query', None)

@@ -186,6 +186,7 @@ class MemberCheckSerializer(serializers.Serializer):
         phone_number = validated_data['phone_number']
         member = Member.objects.get(phone_number=phone_number)
         user = User.objects.create(
+            username=phone_number,
             user_type='member',
             member=member,
             phone_number=phone_number,
