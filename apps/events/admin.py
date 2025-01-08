@@ -18,7 +18,7 @@ class RegistrationInline(admin.TabularInline):
     extra = 0
     readonly_fields = ['user', 'full_name', 'email', 'phone_number', 'gender',
                        'is_church_member', 'church_position', 'nation', 'region',
-                       'city_town', 'amount', 'currency', 'is_paid']
+                       'city_town', 'amount', 'currency', 'is_paid', 'branch']
     can_delete = False
     max_num = 0
 
@@ -108,13 +108,13 @@ class EventAmountAdmin(admin.ModelAdmin):
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'event', 'email', 'phone_number', 'gender',
-                    'church_position', 'amount', 'currency', 'is_paid']
+                    'church_position', 'amount', 'currency', 'is_paid', 'branch']
     list_filter = ['is_paid', 'gender', 'church_position', 'is_church_member',
                    'event']
     search_fields = ['full_name', 'email', 'phone_number', 'event__title']
     readonly_fields = ['event', 'user', 'full_name', 'email', 'phone_number',
                        'gender', 'is_church_member', 'church_position', 'nation',
-                       'region', 'city_town', 'amount', 'currency', 'is_paid']
+                       'region', 'city_town', 'amount', 'currency', 'is_paid', 'branch']
 
     fieldsets = (
         ('Personal Information', {

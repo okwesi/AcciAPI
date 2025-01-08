@@ -25,6 +25,8 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
         user_agent = request.META.get('HTTP_USER_AGENT').lower()
         validated_data['user'] = request.user
         validated_data['amount'] = float(validated_data.pop('amount'))
+        if validated_data.get("is_church_member"):
+            validated_data["branch"] = request.user.branch
 
         registration = EventRegistration.objects.create(**validated_data)
 
@@ -32,7 +34,6 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
             email=registration.email,
             amount=registration.amount,
             currency=registration.currency,
-            user_agent=user_agent
         )
 
         PaymentTransaction.objects.create(

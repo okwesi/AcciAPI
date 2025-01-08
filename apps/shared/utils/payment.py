@@ -3,7 +3,6 @@ from django.conf import settings
 from decouple import config as env
 
 
-
 def initialize(email: str, amount: int, currency: str) -> dict:
     """Initializes a payment with Paystack and returns authorization URL and reference."""
     url = f"https://api.paystack.co/transaction/initialize"
@@ -14,7 +13,7 @@ def initialize(email: str, amount: int, currency: str) -> dict:
     callback_url = f'https://backend.accihq.org/api/v1/complete-payment'
 
     payload = {
-        "email": "okwesi73@gmail.com",
+        "email": email,
         "amount": amount * 100,
         "currency": currency,
         "callback_url": callback_url,

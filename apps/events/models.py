@@ -66,3 +66,4 @@ class EventRegistration(BaseModel):
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     currency = models.CharField(max_length=30)
     is_paid = models.BooleanField(default=False)
+    branch = models.ForeignKey('jurisdiction.Branch', on_delete=models.SET_NULL, null=True, blank=True)
