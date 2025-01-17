@@ -57,8 +57,11 @@ class PostViewSet(viewsets.GenericViewSet):
         page = request.query_params.get('page', 1)
         page_size = request.query_params.get('page_size', 10)
         query = request.query_params.get('query')
+        branch = request.query_params.get('branch', "").lower()
 
         posts = Post.objects.filter(is_active=True, post_type='feed')
+        if branch == "true":
+            posts = posts.filter(branch=request.user.branch)
 
         if query:
             posts = posts.filter(

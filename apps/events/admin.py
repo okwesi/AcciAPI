@@ -115,7 +115,6 @@ class EventRegistrationAdmin(admin.ModelAdmin):
     readonly_fields = ['event', 'user', 'full_name', 'email', 'phone_number',
                        'gender', 'is_church_member', 'church_position', 'nation',
                        'region', 'city_town', 'amount', 'currency', 'is_paid', 'branch']
-
     fieldsets = (
         ('Personal Information', {
             'fields': ('full_name', 'email', 'phone_number', 'gender')
