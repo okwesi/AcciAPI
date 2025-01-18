@@ -37,6 +37,11 @@ INSTALLED_APPS = [
 
 ]
 
+STORAGES = {
+    "default": {"BACKEND": "apps.shared.overrides.MediaRootS3Boto3Storage"},
+    "staticfiles": {"BACKEND": "apps.shared.overrides.StaticRootS3Boto3Storage"},
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
