@@ -145,7 +145,7 @@ class PostViewSet(viewsets.GenericViewSet):
                 Q(content__icontains=query)
             )
 
-        paginator = Paginator(posts, 2)
+        paginator = Paginator(posts, page_size)
         page_obj = paginator.get_page(page)
 
         results = AdminListPostsSerializer(
