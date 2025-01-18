@@ -69,6 +69,13 @@ class UserAuthViewSet(viewsets.GenericViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['PUT'], url_path='remove-profile-picture')
+    def remove_profile_picture(self, request):
+        user = self.request.user
+        user.avatar = None
+        user.save()
+        return Response(GENERAL_SUCCESS_RESPONSE, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['PATCH'])
     def change_password(self, request, pk=None):
         user = self.request.user
